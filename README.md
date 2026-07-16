@@ -39,3 +39,15 @@ Prices are illustrative monthly Bali rental estimates. A production version woul
 Live: [desent-workspace-designer-gray.vercel.app](https://desent-workspace-designer-gray.vercel.app/)
 
 Source: [techandmedia/desent-workspace-designer](https://github.com/techandmedia/desent-workspace-designer).
+
+## Release notes
+
+### v1.0.1 — 16 July 2026
+
+- Fixed rental date validation: past dates, today, and dates inside the 48-hour setup window are unavailable.
+- Added clear date-field guidance explaining the earliest available delivery date.
+
+### v1.0.0 — Initial production release
+
+- Released the interactive monis.rent workspace configurator to Vercel production.
+- Included real-time workspace preview, monthly pricing summary, accessory controls, and validated rental-request flow.
