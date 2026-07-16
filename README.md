@@ -1,2 +1,39 @@
-# Desent Solution
-This Is Not a Typical Coding Test
+# monis.rent — Workspace Designer
+
+A polished, interactive workspace configurator for a Bali rental service, created for the **Desent Solutions Developer Challenge**.
+
+## What it does
+
+- Builds a workspace around 3 desks and 3 ergonomic chairs
+- Adds/removes monitors (up to three), a task lamp, plant, and desk mat
+- Updates a layered CSS workspace scene and monthly estimate in real time
+- Persists the current setup during the browser session
+- Opens a complete rental request flow with validation and confirmation state
+- Works comfortably across mobile, tablet, and desktop sizes
+
+## Stack
+
+Next.js (App Router), TypeScript, Tailwind CSS, and small bespoke CSS illustration primitives. No external image assets are required.
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Then open [http://localhost:3000](http://localhost:3000). Validate the production build with `npm run lint`, `npm run typecheck`, and `npm run build`.
+
+## Design & architecture
+
+The preview is intentionally a composable CSS scene rather than a static product image: each selected product drives a specific visual layer, so the design remains fast and responsive without third-party assets. Product data lives in `lib/products.ts`; UI/state and rental interaction live in `components/workspace-designer.tsx`.
+
+The visual direction combines warm teak, tropical greens, soft terracotta, and editorial typography to feel at home with Bali-based nomads. The reference sketch informed the configurator structure only, not the final visual system.
+
+## Assumptions and next steps
+
+Prices are illustrative monthly Bali rental estimates. A production version would connect stock availability, delivery zones, payments, and a CRM. It could also add sharable configuration URLs and richer 3D/photographic product previews.
+
+## Live site
+
+Deployment URL will be added after Vercel deployment.
