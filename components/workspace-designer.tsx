@@ -9,13 +9,7 @@ import {
   SparklesIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import {
-  byId,
-  formatIDR,
-  products,
-  type Category,
-  type Product,
-} from "../lib/products";
+import { byId, formatIDR, products, type Category, type Product } from "../lib/products";
 
 type Config = {
   desk: string;
@@ -79,21 +73,13 @@ export function WorkspaceDesigner() {
     (sum, item) =>
       sum +
       item.price *
-        (item.category === "desk" || item.category === "chair"
-          ? 1
-          : config[item.category]),
+        (item.category === "desk" || item.category === "chair" ? 1 : config[item.category]),
     0,
   );
-  const updateQty = (
-    category: "monitor" | "lamp" | "plant" | "accessory",
-    delta: number,
-  ) =>
+  const updateQty = (category: "monitor" | "lamp" | "plant" | "accessory", delta: number) =>
     setConfig((old) => ({
       ...old,
-      [category]: Math.max(
-        0,
-        Math.min(category === "monitor" ? 3 : 1, old[category] + delta),
-      ),
+      [category]: Math.max(0, Math.min(category === "monitor" ? 3 : 1, old[category] + delta)),
     }));
 
   return (
@@ -126,12 +112,11 @@ export function WorkspaceDesigner() {
             <em>feels like you.</em>
           </h1>
           <p>
-            Build a focused setup for your Bali chapter. We deliver, assemble,
-            and pick it up when you&apos;re ready to move.
+            Build a focused setup for your Bali chapter. We deliver, assemble, and pick it up when
+            you&apos;re ready to move.
           </p>
           <div className="mini-proof">
-            <span>✦</span> Flexible from 1 month <span>✦</span> Set up in 48
-            hours
+            <span>✦</span> Flexible from 1 month <span>✦</span> Set up in 48 hours
           </div>
         </div>
         <div className="preview-wrap">
@@ -174,16 +159,14 @@ export function WorkspaceDesigner() {
           <p className="muted">Only pay for what you need</p>
         </div>
         <div className="addon-grid">
-          {(["monitor", "lamp", "plant", "accessory"] as const).map(
-            (category) => (
-              <Addon
-                key={category}
-                item={productFor(category)}
-                quantity={config[category]}
-                onChange={(d) => updateQty(category, d)}
-              />
-            ),
-          )}
+          {(["monitor", "lamp", "plant", "accessory"] as const).map((category) => (
+            <Addon
+              key={category}
+              item={productFor(category)}
+              quantity={config[category]}
+              onChange={(d) => updateQty(category, d)}
+            />
+          ))}
         </div>
       </section>
       <section className="sticky-total">
@@ -198,11 +181,7 @@ export function WorkspaceDesigner() {
         </button>
       </section>
       {checkoutOpen && (
-        <Checkout
-          config={config}
-          total={total}
-          onClose={() => setCheckoutOpen(false)}
-        />
+        <Checkout config={config} total={total} onClose={() => setCheckoutOpen(false)} />
       )}
     </main>
   );
@@ -290,7 +269,15 @@ function Addon({
           onClick={() => onChange(quantity ? -1 : 1)}
           aria-pressed={quantity > 0}
         >
-          {quantity > 0 ? <><CheckIcon /> Added — remove</> : <><PlusIcon /> Add to setup</>}
+          {quantity > 0 ? (
+            <>
+              <CheckIcon /> Added — remove
+            </>
+          ) : (
+            <>
+              <PlusIcon /> Add to setup
+            </>
+          )}
         </button>
       )}
     </article>
@@ -301,10 +288,7 @@ function WorkspacePreview({ config }: { config: Config }) {
   const desk = byId(config.desk);
   const chair = byId(config.chair);
   return (
-    <div
-      className="workspace-scene"
-      aria-label="Visual preview of your selected workspace"
-    >
+    <div className="workspace-scene" aria-label="Visual preview of your selected workspace">
       <div className="sun" />
       <div className="arch" />
       <div className="shadow" />
@@ -316,17 +300,11 @@ function WorkspacePreview({ config }: { config: Config }) {
       <div className="lamp-shape" style={{ opacity: config.lamp ? 1 : 0 }}>
         <i />
       </div>
-      <div
-        className="desk-shape"
-        style={{ "--desk": desk.color } as React.CSSProperties}
-      >
+      <div className="desk-shape" style={{ "--desk": desk.color } as React.CSSProperties}>
         <i />
         <i />
       </div>
-      <div
-        className="mat-shape"
-        style={{ opacity: config.accessory ? 1 : 0 }}
-      />
+      <div className="mat-shape" style={{ opacity: config.accessory ? 1 : 0 }} />
       <div className="monitor-row">
         {Array.from({ length: config.monitor }).map((_, i) => (
           <div
@@ -340,10 +318,7 @@ function WorkspacePreview({ config }: { config: Config }) {
           </div>
         ))}
       </div>
-      <div
-        className="chair-shape"
-        style={{ "--chair": chair.color } as React.CSSProperties}
-      >
+      <div className="chair-shape" style={{ "--chair": chair.color } as React.CSSProperties}>
         <i />
         <i />
       </div>
@@ -378,12 +353,7 @@ function Checkout({
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (
-      !data.get("name") ||
-      !data.get("contact") ||
-      !data.get("date") ||
-      !data.get("duration")
-    ) {
+    if (!data.get("name") || !data.get("contact") || !data.get("date") || !data.get("duration")) {
       setError("Please complete all fields so we can check availability.");
       return;
     }
@@ -413,8 +383,8 @@ function Checkout({
             <p className="eyebrow">Request received</p>
             <h2>You&apos;re on your way to a better workday.</h2>
             <p>
-              Our Bali setup team will confirm availability and delivery details
-              within one business day.
+              Our Bali setup team will confirm availability and delivery details within one business
+              day.
             </p>
             <button onClick={onClose}>Back to studio</button>
           </div>
@@ -447,11 +417,7 @@ function Checkout({
               <form onSubmit={submit}>
                 <label>
                   Name
-                  <input
-                    name="name"
-                    placeholder="Your name"
-                    autoComplete="name"
-                  />
+                  <input name="name" placeholder="Your name" autoComplete="name" />
                 </label>
                 <label>
                   Email or WhatsApp
@@ -461,7 +427,9 @@ function Checkout({
                   <label>
                     Need it from
                     <input name="date" type="date" min={minRentalDate} />
-                    <small className="date-hint">Available from {minRentalDate} · setup takes up to 48 hours</small>
+                    <small className="date-hint">
+                      Available from {minRentalDate} · setup takes up to 48 hours
+                    </small>
                   </label>
                   <label>
                     Duration
