@@ -7,10 +7,11 @@
 
 ## Commit and release-note policy
 
-- If a change is exclusively mechanical Prettier formatting, amend the current relevant commit. Do not create a standalone feature or bug-fix commit, and do not add release notes.
+- Every functional, visual, asset, configuration, documentation, or dependency change requires a matching release note in `README.md`, including seemingly small changes such as icons and favicons.
+- The only exception is exclusively mechanical Prettier formatting. For formatting-only work, amend the current relevant commit when it is unpushed; do not add release notes.
 - If a change fixes a lint issue, treat it as a **bug fix**: use a `fix:`-style commit message and add a matching patch release note to `README.md`.
-- If a change includes both formatting and functional/lint fixes, keep the formatting with the relevant fix commit and follow the bug-fix release-note rule.
-- Do not amend a commit that has already been pushed unless the user explicitly asks for history rewriting. For pushed formatting-only changes, create a `chore:` commit instead.
+- If a change includes both formatting and functional/lint fixes, keep the formatting with the relevant fix commit and add release notes for the functional or lint fix.
+- Add the release note in the same commit as its change whenever possible. Do not amend a commit that has already been pushed unless the user explicitly asks for history rewriting.
 
 ## UX and validation policy
 
