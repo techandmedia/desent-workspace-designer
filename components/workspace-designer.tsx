@@ -46,6 +46,13 @@ function productFor(category: Category) {
   return products.find((item) => item.category === category)!;
 }
 
+function dateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function WorkspaceDesigner() {
   const [config, setConfig] = useState<Config>(defaultConfig);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -365,6 +372,9 @@ function Checkout({
   ];
   const qty = (p: Product) =>
     p.category === "desk" || p.category === "chair" ? 1 : config[p.category];
+  const earliestRentalDate = new Date();
+  earliestRentalDate.setDate(earliestRentalDate.getDate() + 2);
+  const minRentalDate = dateInputValue(earliestRentalDate);
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -375,6 +385,10 @@ function Checkout({
       !data.get("duration")
     ) {
       setError("Please complete all fields so we can check availability.");
+      return;
+    }
+    if (String(data.get("date")) < minRentalDate) {
+      setError("Please choose a date at least 48 hours from today.");
       return;
     }
     setError("");
@@ -446,7 +460,8 @@ function Checkout({
                 <div className="form-row">
                   <label>
                     Need it from
-                    <input name="date" type="date" />
+                    <input name="date" type="date" min={minRentalDate} />
+                    <small className="date-hint">Available from {minRentalDate} · setup takes up to 48 hours</small>
                   </label>
                   <label>
                     Duration
