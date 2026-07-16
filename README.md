@@ -42,6 +42,10 @@ Source: [techandmedia/desent-workspace-designer](https://github.com/techandmedia
 
 ## Release notes
 
+### v1.0.4 — 16 July 2026
+
+- Fixed stale rental-form errors: name, contact, duration, date, and form-level validation feedback now clear as soon as the corrected input is valid.
+
 ### v1.0.3 — 16 July 2026
 
 - Fixed rental-request validation for malformed email addresses and missing rental durations.

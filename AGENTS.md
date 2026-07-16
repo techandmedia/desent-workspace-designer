@@ -19,3 +19,4 @@
 - Prefer immediate, accessible validation feedback that explains the issue and how to resolve it. Validate again on submission as a safety net.
 - For every form change, test both successful submission and each invalid field independently. At minimum cover empty required fields, malformed values, boundary values, and invalid option selections.
 - Do not claim form validation is complete until those negative paths are automated or explicitly verified in the browser.
+- When an invalid field becomes valid, verify that its field-level error and any now-obsolete form-level error clear without requiring another submit.

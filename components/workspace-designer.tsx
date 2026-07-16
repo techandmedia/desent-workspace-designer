@@ -356,6 +356,35 @@ function Checkout({
   const earliestRentalDate = new Date();
   earliestRentalDate.setDate(earliestRentalDate.getDate() + 2);
   const minRentalDate = dateInputValue(earliestRentalDate);
+  function updateFieldError(field: keyof RentalFieldErrors, message?: string) {
+    setFieldErrors((current) => {
+      const next = { ...current, [field]: message };
+      if (Object.values(next).every((value) => !value)) setError("");
+      return next;
+    });
+  }
+  function validateTextField(field: "name" | "contact", value: string) {
+    const validation = validateRentalRequest({
+      name: field === "name" ? value : "Workspace guest",
+      contact: field === "contact" ? value : "guest@example.com",
+      date: minRentalDate,
+      duration: rentalDurations[0],
+      minimumDate: minRentalDate,
+      hasInvalidDateInput: false,
+    });
+    updateFieldError(field, validation[field]);
+  }
+  function validateDuration(value: string) {
+    const validation = validateRentalRequest({
+      name: "Workspace guest",
+      contact: "guest@example.com",
+      date: minRentalDate,
+      duration: value,
+      minimumDate: minRentalDate,
+      hasInvalidDateInput: false,
+    });
+    updateFieldError("duration", validation.duration);
+  }
   function validateRentalDate(input: HTMLInputElement, reportEmpty = false) {
     let dateError = "";
     if (input.validity.badInput) {
@@ -365,7 +394,7 @@ function Checkout({
     } else if (input.value < minRentalDate) {
       dateError = `Choose ${minRentalDate} or a later date so we can prepare your setup.`;
     }
-    setFieldErrors((current) => ({ ...current, date: dateError }));
+    updateFieldError("date", dateError);
     return !dateError;
   }
   function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -447,6 +476,8 @@ function Checkout({
                     autoComplete="name"
                     aria-invalid={Boolean(fieldErrors.name)}
                     aria-describedby="rental-name-error"
+                    onInput={(event) => validateTextField("name", event.currentTarget.value)}
+                    onBlur={(event) => validateTextField("name", event.currentTarget.value)}
                   />
                   {fieldErrors.name && (
                     <small className="date-error" id="rental-name-error" role="alert">
@@ -461,6 +492,8 @@ function Checkout({
                     placeholder="you@email.com / +62..."
                     aria-invalid={Boolean(fieldErrors.contact)}
                     aria-describedby="rental-contact-error"
+                    onInput={(event) => validateTextField("contact", event.currentTarget.value)}
+                    onBlur={(event) => validateTextField("contact", event.currentTarget.value)}
                   />
                   {fieldErrors.contact && (
                     <small className="date-error" id="rental-contact-error" role="alert">
@@ -496,6 +529,7 @@ function Checkout({
                       defaultValue=""
                       aria-invalid={Boolean(fieldErrors.duration)}
                       aria-describedby="rental-duration-error"
+                      onChange={(event) => validateDuration(event.currentTarget.value)}
                     >
                       <option value="" disabled>
                         Select
