@@ -338,6 +338,7 @@ function Checkout({
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [dateError, setDateError] = useState("");
   const items = [
     byId(config.desk),
     byId(config.chair),
@@ -350,15 +351,32 @@ function Checkout({
   const earliestRentalDate = new Date();
   earliestRentalDate.setDate(earliestRentalDate.getDate() + 2);
   const minRentalDate = dateInputValue(earliestRentalDate);
+  function validateRentalDate(input: HTMLInputElement, reportEmpty = false) {
+    if (input.validity.badInput) {
+      setDateError("Enter a complete, valid calendar date.");
+      return false;
+    }
+    if (!input.value) {
+      setDateError(reportEmpty ? "Choose the date you need your setup." : "");
+      return !reportEmpty;
+    }
+    if (input.value < minRentalDate) {
+      setDateError(`Choose ${minRentalDate} or a later date so we can prepare your setup.`);
+      return false;
+    }
+    setDateError("");
+    return true;
+  }
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    if (!data.get("name") || !data.get("contact") || !data.get("date") || !data.get("duration")) {
-      setError("Please complete all fields so we can check availability.");
+    const dateInput = event.currentTarget.elements.namedItem("date") as HTMLInputElement;
+    if (!validateRentalDate(dateInput, true)) {
+      setError("Please correct the rental date before sending your request.");
       return;
     }
-    if (String(data.get("date")) < minRentalDate) {
-      setError("Please choose a date at least 48 hours from today.");
+    if (!data.get("name") || !data.get("contact") || !data.get("date") || !data.get("duration")) {
+      setError("Please complete all fields so we can check availability.");
       return;
     }
     setError("");
@@ -414,7 +432,7 @@ function Checkout({
                   </b>
                 </div>
               </div>
-              <form onSubmit={submit}>
+              <form onSubmit={submit} noValidate>
                 <label>
                   Name
                   <input name="name" placeholder="Your name" autoComplete="name" />
@@ -426,10 +444,23 @@ function Checkout({
                 <div className="form-row">
                   <label>
                     Need it from
-                    <input name="date" type="date" min={minRentalDate} />
-                    <small className="date-hint">
+                    <input
+                      name="date"
+                      type="date"
+                      min={minRentalDate}
+                      aria-describedby="rental-date-hint rental-date-error"
+                      aria-invalid={Boolean(dateError)}
+                      onInput={(event) => validateRentalDate(event.currentTarget)}
+                      onBlur={(event) => validateRentalDate(event.currentTarget)}
+                    />
+                    <small className="date-hint" id="rental-date-hint">
                       Available from {minRentalDate} · setup takes up to 48 hours
                     </small>
+                    {dateError && (
+                      <small className="date-error" id="rental-date-error" role="alert">
+                        {dateError}
+                      </small>
+                    )}
                   </label>
                   <label>
                     Duration

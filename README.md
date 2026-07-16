@@ -42,6 +42,10 @@ Source: [techandmedia/desent-workspace-designer](https://github.com/techandmedia
 
 ## Release notes
 
+### v1.0.2 — 16 July 2026
+
+- Fixed manual rental-date entry: invalid and too-early dates now receive immediate, accessible guidance without removing keyboard or paste input.
+
 ### v1.0.1 — 16 July 2026
 
 - Fixed rental date validation: past dates, today, and dates inside the 48-hour setup window are unavailable.
