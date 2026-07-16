@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky"
@@ -30,7 +31,8 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.5",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
   },
   "lint-staged": {
     "*.{css,js,json,mjs,ts,tsx,md,yml,yaml}": "prettier --check"

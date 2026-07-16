@@ -10,6 +10,11 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { byId, formatIDR, products, type Category, type Product } from "../lib/products";
+import {
+  rentalDurations,
+  validateRentalRequest,
+  type RentalFieldErrors,
+} from "../lib/rental-validation";
 
 type Config = {
   desk: string;
@@ -338,7 +343,7 @@ function Checkout({
 }) {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
-  const [dateError, setDateError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<RentalFieldErrors>({});
   const items = [
     byId(config.desk),
     byId(config.chair),
@@ -352,31 +357,32 @@ function Checkout({
   earliestRentalDate.setDate(earliestRentalDate.getDate() + 2);
   const minRentalDate = dateInputValue(earliestRentalDate);
   function validateRentalDate(input: HTMLInputElement, reportEmpty = false) {
+    let dateError = "";
     if (input.validity.badInput) {
-      setDateError("Enter a complete, valid calendar date.");
-      return false;
+      dateError = "Enter a complete, valid calendar date.";
+    } else if (!input.value) {
+      dateError = reportEmpty ? "Choose the date you need your setup." : "";
+    } else if (input.value < minRentalDate) {
+      dateError = `Choose ${minRentalDate} or a later date so we can prepare your setup.`;
     }
-    if (!input.value) {
-      setDateError(reportEmpty ? "Choose the date you need your setup." : "");
-      return !reportEmpty;
-    }
-    if (input.value < minRentalDate) {
-      setDateError(`Choose ${minRentalDate} or a later date so we can prepare your setup.`);
-      return false;
-    }
-    setDateError("");
-    return true;
+    setFieldErrors((current) => ({ ...current, date: dateError }));
+    return !dateError;
   }
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const dateInput = event.currentTarget.elements.namedItem("date") as HTMLInputElement;
-    if (!validateRentalDate(dateInput, true)) {
-      setError("Please correct the rental date before sending your request.");
-      return;
-    }
-    if (!data.get("name") || !data.get("contact") || !data.get("date") || !data.get("duration")) {
-      setError("Please complete all fields so we can check availability.");
+    const nextErrors = validateRentalRequest({
+      name: String(data.get("name") ?? ""),
+      contact: String(data.get("contact") ?? ""),
+      date: String(data.get("date") ?? ""),
+      duration: String(data.get("duration") ?? ""),
+      minimumDate: minRentalDate,
+      hasInvalidDateInput: dateInput.validity.badInput,
+    });
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) {
+      setError("Please review the highlighted fields before sending your request.");
       return;
     }
     setError("");
@@ -435,11 +441,32 @@ function Checkout({
               <form onSubmit={submit} noValidate>
                 <label>
                   Name
-                  <input name="name" placeholder="Your name" autoComplete="name" />
+                  <input
+                    name="name"
+                    placeholder="Your name"
+                    autoComplete="name"
+                    aria-invalid={Boolean(fieldErrors.name)}
+                    aria-describedby="rental-name-error"
+                  />
+                  {fieldErrors.name && (
+                    <small className="date-error" id="rental-name-error" role="alert">
+                      {fieldErrors.name}
+                    </small>
+                  )}
                 </label>
                 <label>
                   Email or WhatsApp
-                  <input name="contact" placeholder="you@email.com / +62..." />
+                  <input
+                    name="contact"
+                    placeholder="you@email.com / +62..."
+                    aria-invalid={Boolean(fieldErrors.contact)}
+                    aria-describedby="rental-contact-error"
+                  />
+                  {fieldErrors.contact && (
+                    <small className="date-error" id="rental-contact-error" role="alert">
+                      {fieldErrors.contact}
+                    </small>
+                  )}
                 </label>
                 <div className="form-row">
                   <label>
@@ -449,30 +476,39 @@ function Checkout({
                       type="date"
                       min={minRentalDate}
                       aria-describedby="rental-date-hint rental-date-error"
-                      aria-invalid={Boolean(dateError)}
+                      aria-invalid={Boolean(fieldErrors.date)}
                       onInput={(event) => validateRentalDate(event.currentTarget)}
                       onBlur={(event) => validateRentalDate(event.currentTarget)}
                     />
                     <small className="date-hint" id="rental-date-hint">
                       Available from {minRentalDate} · setup takes up to 48 hours
                     </small>
-                    {dateError && (
+                    {fieldErrors.date && (
                       <small className="date-error" id="rental-date-error" role="alert">
-                        {dateError}
+                        {fieldErrors.date}
                       </small>
                     )}
                   </label>
                   <label>
                     Duration
-                    <select name="duration" defaultValue="">
+                    <select
+                      name="duration"
+                      defaultValue=""
+                      aria-invalid={Boolean(fieldErrors.duration)}
+                      aria-describedby="rental-duration-error"
+                    >
                       <option value="" disabled>
                         Select
                       </option>
-                      <option>1 month</option>
-                      <option>3 months</option>
-                      <option>6 months</option>
-                      <option>12 months</option>
+                      {rentalDurations.map((duration) => (
+                        <option key={duration}>{duration}</option>
+                      ))}
                     </select>
+                    {fieldErrors.duration && (
+                      <small className="date-error" id="rental-duration-error" role="alert">
+                        {fieldErrors.duration}
+                      </small>
+                    )}
                   </label>
                 </div>
                 {error && <p className="form-error">{error}</p>}
