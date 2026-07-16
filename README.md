@@ -36,4 +36,6 @@ Prices are illustrative monthly Bali rental estimates. A production version woul
 
 ## Live site
 
-Deployment is pending a valid Vercel account session. The source repository is [techandmedia/desent-workspace-designer](https://github.com/techandmedia/desent-workspace-designer).
+Live: [desent-workspace-designer-gray.vercel.app](https://desent-workspace-designer-gray.vercel.app/)
+
+Source: [techandmedia/desent-workspace-designer](https://github.com/techandmedia/desent-workspace-designer).
